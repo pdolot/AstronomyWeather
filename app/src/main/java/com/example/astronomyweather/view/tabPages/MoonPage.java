@@ -34,12 +34,12 @@ public class MoonPage extends BasePage<MoonData> {
 
     private List<AstronomyInfo> getAstronomyInfo() {
         List<AstronomyInfo> astronomyInfo = new ArrayList<>();
-        astronomyInfo.add(new AstronomyInfo("Ostatnia aktualizacja", getData().getUpdateDate(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Wschód księżyca", getData().getMoonrise(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Wysokość księżyca", getData().getMoonAltitude(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Azymut księżyca", getData().getMoonAzimuth(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Odległość księżyca", getData().getMoonDistance(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Kąt paralaktyczny", getData().getMoonParallacticAngle(), R.drawable.ic_more));
+        astronomyInfo.add(new AstronomyInfo("Ostatnia aktualizacja", getData().getUpdateDate(), R.drawable.ic_small_moon));
+        astronomyInfo.add(new AstronomyInfo("Wschód księżyca", getData().getMoonrise(), R.drawable.ic_small_moon));
+        astronomyInfo.add(new AstronomyInfo("Wysokość księżyca", getData().getMoonAltitude(), R.drawable.ic_small_moon));
+        astronomyInfo.add(new AstronomyInfo("Azymut księżyca", getData().getMoonAzimuth(), R.drawable.ic_small_moon));
+        astronomyInfo.add(new AstronomyInfo("Odległość księżyca", getData().getMoonDistance(), R.drawable.ic_small_moon));
+        astronomyInfo.add(new AstronomyInfo("Kąt paralaktyczny", getData().getMoonParallacticAngle(), R.drawable.ic_small_moon));
         return astronomyInfo;
     }
 }

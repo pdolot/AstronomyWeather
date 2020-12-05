@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             ((LinearLayoutManager) tabNames.getLayoutManager()).scrollToPositionWithOffset(position, centerOfScreen);
 
             if (isClicked)
-                tabs.smoothScrollToPosition(position);
+                tabs.scrollToPosition(position);
         });
 
     }

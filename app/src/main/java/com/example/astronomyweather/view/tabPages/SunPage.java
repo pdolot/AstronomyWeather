@@ -34,12 +34,12 @@ public class SunPage extends BasePage<SunData> {
 
     private List<AstronomyInfo> getAstronomyInfo() {
         List<AstronomyInfo> astronomyInfo = new ArrayList<>();
-        astronomyInfo.add(new AstronomyInfo("Ostatnia aktualizacja", getData().getUpdateDate(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Wschód słońca", getData().getSunrise(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Zachód słońca", getData().getSunset(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Wysokość słońca", getData().getSunAltitude(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Azymut słońca", getData().getSunAzimuth(), R.drawable.ic_more));
-        astronomyInfo.add(new AstronomyInfo("Odległość słońca", getData().getSunDistance(), R.drawable.ic_more));
+        astronomyInfo.add(new AstronomyInfo("Ostatnia aktualizacja", getData().getUpdateDate(), R.drawable.ic_small_sun));
+        astronomyInfo.add(new AstronomyInfo("Wschód słońca", getData().getSunrise(), R.drawable.ic_small_sun));
+        astronomyInfo.add(new AstronomyInfo("Zachód słońca", getData().getSunset(), R.drawable.ic_small_sun));
+        astronomyInfo.add(new AstronomyInfo("Wysokość słońca", getData().getSunAltitude(), R.drawable.ic_small_sun));
+        astronomyInfo.add(new AstronomyInfo("Azymut słońca", getData().getSunAzimuth(), R.drawable.ic_small_sun));
+        astronomyInfo.add(new AstronomyInfo("Odległość słońca", getData().getSunDistance(), R.drawable.ic_small_sun));
         return astronomyInfo;
     }
 }
