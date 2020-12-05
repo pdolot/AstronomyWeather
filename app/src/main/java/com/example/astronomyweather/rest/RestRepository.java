@@ -22,7 +22,7 @@ public class RestRepository {
 
     public Flowable<AstronomyData> getAstronomyInfo(String key, String lat, String lng, Integer timeInterval) {
         return restService.getAstronomyInfo(key, lat, lng)
-                .repeatWhen(completed -> completed.delay(timeInterval, TimeUnit.SECONDS))
+                .repeatWhen(completed -> completed.delay(timeInterval, TimeUnit.MINUTES))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(astronomyResponse -> {

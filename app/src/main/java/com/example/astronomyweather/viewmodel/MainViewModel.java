@@ -113,18 +113,16 @@ public class MainViewModel extends ViewModel {
                     tabs.add(new SunPage(data.getSunData()));
                     tabs.add(new MoonPage(data.getMoonData()));
 
-                    if (menuExist){
-                        MenuPage menuPage = new MenuPage();
-                        menuPage.setData(new SyncData(lat, lng, timeInterval));
-                        tabs.add(menuPage);
-                    }
-
                     ArrayList<String> tabNames = new ArrayList<>();
                     tabNames.add("Słońce");
                     tabNames.add("Księżyc");
 
                     if (menuExist){
+                        MenuPage menuPage = new MenuPage();
+                        menuPage.setData(new SyncData(lat, lng, timeInterval));
+                        tabs.add(menuPage);
                         tabNames.add("Menu");
+                        adapterPosition = tabNames.size() - 1;
                     }
 
                     this.tabNames.postValue(tabNames);
