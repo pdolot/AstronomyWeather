@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bgColor"
+    tools:context=".view.MainActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tabNames"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#3C4043"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_tab" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tabs"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        tools:listitem="@layout/view_sun"
+        android:overScrollMode="never"
+        app:layout_constraintBottom_toTopOf="@id/bottomMenu"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabNames" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomMenu"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@drawable/rounded_bottom_background"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextClock
+            android:id="@+id/currentTime"
+            android:layout_width="96dp"
+            android:layout_height="wrap_content"
+            android:format24Hour="HH:mm:ss"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textAlignment="center"
+            tools:text="19:10:33"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/hind_vadodara_semi_bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/currentLatitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/current_latitude"
+            android:textColor="@color/white"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/currentTime"
+            app:layout_constraintEnd_toStartOf="@id/menu"/>
+        <TextView
+            android:id="@+id/currentLongitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="@string/current_longitude"
+            android:textColor="@color/white"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/currentTime"
+            app:layout_constraintEnd_toStartOf="@id/menu"/>
+
+        <ImageView
+            android:id="@+id/menu"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:src="@drawable/ic_more"
+            app:tint="@color/white"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:overScrollMode="never"
+    android:scrollbars="none"
+    tools:background="@color/bgColor">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/latitudeLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_edit_text_layout"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/latitudeLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_vadodara_semi_bold"
+                android:text="@string/latitude"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/latitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_edit_text"
+                android:digits="-0123456789."
+                android:fontFamily="@font/hind_vadodara_regular"
+                android:hint="np. 51.777224437636676"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textColorHint="#4DFFFFFF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/latitudeLabel"
+                app:layout_constraintTop_toBottomOf="@id/latitudeLabel" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/longitudeLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_edit_text_layout"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/latitudeLayout">
+
+            <TextView
+                android:id="@+id/longitudeLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_vadodara_semi_bold"
+                android:text="@string/longitude"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/longitude"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_edit_text"
+                android:digits="-0123456789."
+                android:fontFamily="@font/hind_vadodara_regular"
+                android:hint="np. 19.32456456"
+                android:inputType="number"
+                android:textColor="@color/white"
+                android:textColorHint="#4DFFFFFF"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/longitudeLabel"
+                app:layout_constraintTop_toBottomOf="@id/longitudeLabel" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/timeIntervalLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_edit_text_layout"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/longitudeLayout">
+
+            <TextView
+                android:id="@+id/timeIntervalLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_vadodara_semi_bold"
+                android:text="@string/timeInterval"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/timeInterval"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_edit_text"
+                android:fontFamily="@font/hind_vadodara_regular"
+                android:hint="np. 5"
+                android:inputType="number"
+                android:maxLength="4"
+                android:textColor="@color/white"
+                android:textColorHint="#4DFFFFFF"
+                app:layout_constraintStart_toStartOf="@id/timeIntervalLabel"
+                app:layout_constraintTop_toBottomOf="@id/timeIntervalLabel" />
+
+            <TextView
+                android:id="@+id/timeIntervalMetric"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/hind_vadodara_regular"
+                android:text="minut"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/timeInterval"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/timeInterval"
+                app:layout_constraintTop_toTopOf="@id/timeInterval" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <Button
+            android:id="@+id/applyChanges"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#2196F3"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_sun"
+            android:text="Zapisz zmiany"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timeIntervalLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">AstronomyWeather</string>
+    <string name="current_latitude">Szerokość geo.: %1$s</string>
+    <string name="current_longitude">Długość geo.: %1$s</string>
+    <string name="latitude">Szerokość geograficzna</string>
+    <string name="longitude">Długość geograficzna</string>
+    <string name="timeInterval">Częstotliwość odświeżania danych</string>
+</resources>
