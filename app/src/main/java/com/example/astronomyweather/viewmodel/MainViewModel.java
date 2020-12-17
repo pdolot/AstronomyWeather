@@ -183,6 +183,7 @@ public class MainViewModel extends AndroidViewModel {
                 case INSERTED_NEW_CURRENT_WEATHER:
                     insertDailyWeather();
                     break;
+                case CANNOT_FETCH_WEATHER:
                 case INSERTED_NEW_WEEKLY_WEATHER:
                     getCurrentWeather();
                     break;
@@ -201,10 +202,10 @@ public class MainViewModel extends AndroidViewModel {
         isInternetConnection.observe(owner, isConnected -> {
             if (!isConnected) {
                 error.postValue("Brak połączenia z internetem");
-                getCurrentWeather();
-                getWeeklyWeather();
+                getCurrentLocation();
             } else {
                 error.postValue(null);
+                getCurrentLocation();
                 fetchAstronomyData();
             }
         });
@@ -315,6 +316,7 @@ public class MainViewModel extends AndroidViewModel {
                     locations = locationWeathers;
                     viewModelState.postValue(ViewModelState.FETCHED_LOCATIONS_FROM_DB);
                 }, error -> {
+                    viewModelState.postValue(ViewModelState.FETCHED_LOCATIONS_FROM_DB);
                     Log.e(TAG, error.getMessage());
                 }));
     }
@@ -430,6 +432,7 @@ public class MainViewModel extends AndroidViewModel {
                                 weatherResponse = data;
                                 viewModelState.postValue(ViewModelState.FETCHED_WEATHER);
                             }, error -> {
+                                viewModelState.postValue(ViewModelState.CANNOT_FETCH_WEATHER);
                                 Log.e(TAG, error.getMessage());
                             })
             );
@@ -496,6 +499,7 @@ public class MainViewModel extends AndroidViewModel {
         FETCHED_WEEKLY_WEATHER_FROM_DB,
 
         FETCHED_WEATHER,
+        CANNOT_FETCH_WEATHER,
 
         LOCATION_PAGE_ADDED,
         REFRESH_DATA,
