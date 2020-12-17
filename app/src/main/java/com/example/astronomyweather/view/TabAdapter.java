@@ -2,17 +2,16 @@ package com.example.astronomyweather.view;
 
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.astronomyweather.view.tabPages.BaseListener;
 import com.example.astronomyweather.view.tabPages.BasePage;
 import com.example.astronomyweather.view.tabPages.MenuPage;
 import com.example.astronomyweather.view.tabPages.ViewType;
+import com.example.astronomyweather.view.tabPages.locations.LocationsPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
 
     private List<BasePage<? extends Object>> tabs = new ArrayList<>();
     private MenuPage.MenuListener menuListener;
+    private LocationsPage.LocationsListener locationsListener;
     private int screenWidth = 0;
     private DisplayMetrics displayMetrics = new DisplayMetrics();
     private boolean isDualPane = false;
@@ -30,8 +30,7 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
     }
 
     public void setTabs(List<BasePage<? extends Object>> tabs) {
-        this.tabs.clear();
-        this.tabs.addAll(tabs);
+        this.tabs = tabs;
         notifyDataSetChanged();
     }
 
@@ -45,16 +44,21 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        tabs.get(position).onBindViewHolder(holder, position);
         if (tabs.get(position) instanceof MenuPage) {
             tabs.get(position).setListener(menuListener);
         }
 
-        if (isDualPane){
+        if (tabs.get(position) instanceof LocationsPage) {
+            tabs.get(position).setListener(locationsListener);
+        }
+
+        if (isDualPane) {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
             layoutParams.width = screenWidth / 2;
             holder.itemView.setLayoutParams(layoutParams);
         }
+
+        tabs.get(position).onBindViewHolder(holder, position);
     }
 
     @Override
@@ -73,6 +77,10 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
         } else {
             return -1;
         }
+    }
+
+    public void setLocationsListener(LocationsPage.LocationsListener locationsListener) {
+        this.locationsListener = locationsListener;
     }
 
     public void setMenuListener(MenuPage.MenuListener menuListener) {

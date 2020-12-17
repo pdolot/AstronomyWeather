@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:overScrollMode="never"
+    android:scrollbars="none"
+    tools:background="@color/bgColor">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="120dp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintDimensionRatio="1:1"/>
+
+        <TextView
+            android:id="@+id/location"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/weatherIcon"
+            app:layout_constraintStart_toEndOf="@id/weatherIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/weatherDescription"
+            app:drawableEndCompat="@drawable/ic_location"
+            app:drawableTint="@color/white"
+            android:layout_marginStart="16dp"
+            android:textSize="24sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/hind_vadodara_semi_bold"
+            android:gravity="center|start"
+            tools:text="Warszawa"/>
+
+        <TextView
+            android:id="@+id/weatherDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/location"
+            app:layout_constraintStart_toEndOf="@id/weatherIcon"
+            app:layout_constraintBottom_toTopOf="@id/temperature"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="24dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/hind_vadodara_regular"
+            android:gravity="center|start"
+            tools:text="Słonecznie"/>
+
+        <TextView
+            android:id="@+id/temperature"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/weatherDescription"
+            app:layout_constraintStart_toEndOf="@id/weatherIcon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/weatherIcon"
+            app:drawableEndCompat="@drawable/ic_temperature"
+            app:drawableTint="@color/white"
+            android:layout_marginStart="24dp"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/hind_vadodara_regular"
+            android:gravity="center|start"
+            tools:text="5°C"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/viewWeather_recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:overScrollMode="never"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/weatherIcon"
+            tools:listitem="@layout/item_astronomy_info" />
+
+        <TextView
+            android:id="@+id/updateTime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/viewWeather_recyclerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="12dp"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/hind_vadodara_regular"
+            android:gravity="center|start"
+            tools:text="time"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

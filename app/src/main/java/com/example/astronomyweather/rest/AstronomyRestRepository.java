@@ -12,16 +12,16 @@ import io.reactivex.Flowable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
-public class RestRepository {
+public class AstronomyRestRepository {
 
-    private RestService restService;
+    private AstronomyRestService astronomyRestService;
 
-    public RestRepository(RestService restService) {
-        this.restService = restService;
+    public AstronomyRestRepository(AstronomyRestService astronomyRestService) {
+        this.astronomyRestService = astronomyRestService;
     }
 
     public Flowable<AstronomyData> getAstronomyInfo(String key, String lat, String lng, Integer timeInterval) {
-        return restService.getAstronomyInfo(key, lat, lng)
+        return astronomyRestService.getAstronomyInfo(key, lat, lng)
                 .repeatWhen(completed -> completed.delay(timeInterval, TimeUnit.MINUTES))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

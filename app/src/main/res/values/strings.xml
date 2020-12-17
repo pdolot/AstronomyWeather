@@ -5,4 +5,17 @@
     <string name="latitude">Szerokość geograficzna</string>
     <string name="longitude">Długość geograficzna</string>
     <string name="timeInterval">Częstotliwość odświeżania danych</string>
+    <string name="units">Jednostki</string>
+    <string name="standard">Standardowe (K, m/s)</string>
+    <string name="metric">Metryczne (°C, m/s)</string>
+    <string name="imperial">Imperialne (°F, mile/s)</string>
+
+    <string name="temperature">%1$.2f %2$s</string>
+    <string name="temperatureMaxMin">max. %1$.2f %2$s / min. %3$.2f %4$s</string>
+    <string name="windSpeed">%1$.2f %2$s</string>
+    <string name="windDegrees">%1$.2f °</string>
+    <string name="pressure">%1$d hPa</string>
+    <string name="humidity">%1$d %%</string>
+    <string name="clouds">%1$d %%</string>
+    <string name="visibility">%1$d m</string>
 </resources>

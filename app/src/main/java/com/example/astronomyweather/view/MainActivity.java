@@ -1,6 +1,8 @@
 package com.example.astronomyweather.view;
 
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,12 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.example.astronomyweather.ConnectivityReceiver;
+import com.example.astronomyweather.Units;
 import com.example.astronomyweather.R;
 import com.example.astronomyweather.view.tabPages.CustomSnapHelper;
+import com.example.astronomyweather.view.tabPages.MenuPage;
+import com.example.astronomyweather.view.tabPages.locations.LocationsPage;
 import com.example.astronomyweather.viewmodel.MainViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -29,13 +34,18 @@ public class MainActivity extends AppCompatActivity {
     private ImageView menu;
     private TextView currentLatitude;
     private TextView currentLongitude;
+    private TextView errorMessage;
+    private ConnectivityReceiver connectivityReceiver = new ConnectivityReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
+        registerReceiver(connectivityReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        viewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
+        viewModel.startObserve(this);
         findViews();
         setTabNamesRecyclerView();
         setTabsRecyclerView();
@@ -51,12 +61,29 @@ public class MainActivity extends AppCompatActivity {
             tabNamesAdapter.setCurrentTab(viewModel.adapterPosition, true);
         });
 
+        viewModel.error.observe(this, error -> {
+            if (error != null){
+                errorMessage.setVisibility(View.VISIBLE);
+                errorMessage.setText(error);
+            }else{
+                errorMessage.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        connectivityReceiver.connectivityReceiverListener = isConnected -> {
+            viewModel.isInternetConnection.postValue(isConnected);
+        };
     }
 
     private void findViews() {
         tabNames = findViewById(R.id.tabNames);
         tabs = findViewById(R.id.tabs);
         menu = findViewById(R.id.menu);
+        errorMessage = findViewById(R.id.error);
         currentLatitude = findViewById(R.id.currentLatitude);
         currentLongitude = findViewById(R.id.currentLongitude);
     }
@@ -73,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
             if (isClicked)
                 tabs.scrollToPosition(position);
         });
-
     }
 
     private void setTabsRecyclerView() {
@@ -118,13 +144,45 @@ public class MainActivity extends AppCompatActivity {
             viewModel.addMenu();
         });
 
-        tabAdapter.setMenuListener((lat, lng, timeInterval) -> {
-            viewModel.lat = lat;
-            viewModel.lng = lng;
-            viewModel.timeInterval = timeInterval;
-            viewModel.removeMenu();
-            bindViews();
-            viewModel.fetchAstronomyData();
+        tabAdapter.setMenuListener(new MenuPage.MenuListener() {
+            @Override
+            public void onApplyChanges(String lat, String lng, int timeInterval, Units units) {
+                viewModel.lat = lat;
+                viewModel.lng = lng;
+                viewModel.timeInterval = timeInterval;
+                viewModel.removeMenu();
+                viewModel.currentUnits = units;
+                bindViews();
+                viewModel.fetchAstronomyData();
+                viewModel.viewModelState.postValue(MainViewModel.ViewModelState.CHANGED_UNITS);
+            }
+
+            @Override
+            public void onRefreshData() {
+                viewModel.viewModelState.postValue(MainViewModel.ViewModelState.REFRESH_DATA);
+            }
+        });
+
+        tabAdapter.setLocationsListener(new LocationsPage.LocationsListener() {
+            @Override
+            public void onAddCity(String city) {
+                viewModel.checkLocations(city);
+            }
+
+            @Override
+            public void onChangeFilter(Boolean favorite) {
+                viewModel.setFavoriteFilterEnable(favorite);
+            }
+
+            @Override
+            public void onFavoriteChange(Long id, Boolean favorite) {
+                viewModel.changeFavorite(id, favorite);
+            }
+
+            @Override
+            public void onSetCurrent(Long id) {
+                viewModel.setCurrentLocation(id);
+            }
         });
     }
 
@@ -133,4 +191,9 @@ public class MainActivity extends AppCompatActivity {
         currentLongitude.setText(getString(R.string.current_longitude, viewModel.lng));
     }
 
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(connectivityReceiver);
+        super.onDestroy();
+    }
 }

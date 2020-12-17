@@ -10,8 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.astronomyweather.R;
-import com.example.astronomyweather.view.tabPages.BasePage;
-import com.example.astronomyweather.view.tabPages.MenuPage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +22,7 @@ public class TabNamesAdapter extends RecyclerView.Adapter<TabNamesAdapter.ViewHo
 
     public void setTabNames(List<String> tabNames) {
         this.currentTab = 0;
-        this.tabNames.clear();
-        this.tabNames.addAll(tabNames);
+        this.tabNames = tabNames;
         notifyDataSetChanged();
     }
 

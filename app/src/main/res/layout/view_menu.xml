@@ -144,18 +144,89 @@
                 app:layout_constraintTop_toTopOf="@id/timeInterval" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/unitLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/background_edit_text_layout"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/timeIntervalLayout">
+
+            <TextView
+                android:id="@+id/unitsLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/hind_vadodara_semi_bold"
+                android:text="@string/units"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <RadioGroup
+                android:id="@+id/units"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/unitsLabel">
+
+                <RadioButton
+                    android:id="@+id/metric"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:fontFamily="@font/hind_vadodara_regular"
+                    android:text="@string/metric"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/standard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/hind_vadodara_regular"
+                    android:text="@string/standard"
+                    android:textColor="@color/white" />
+
+                <RadioButton
+                    android:id="@+id/imperial"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/hind_vadodara_regular"
+                    android:text="@string/imperial"
+                    android:textColor="@color/white" />
+            </RadioGroup>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <Button
             android:id="@+id/applyChanges"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#2196F3"
             android:layout_marginTop="32dp"
-            android:src="@drawable/ic_sun"
+            android:backgroundTint="#2196F3"
             android:text="Zapisz zmiany"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/timeIntervalLayout" />
+            app:layout_constraintTop_toBottomOf="@id/unitLayout" />
+
+        <Button
+            android:id="@+id/refreshData"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#7E57C2"
+            android:text="Odśwież dane"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/applyChanges" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
