@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.astronomyweather.ConnectivityReceiver;
-import com.example.astronomyweather.Units;
 import com.example.astronomyweather.R;
+import com.example.astronomyweather.Units;
 import com.example.astronomyweather.view.tabPages.CustomSnapHelper;
 import com.example.astronomyweather.view.tabPages.MenuPage;
 import com.example.astronomyweather.view.tabPages.locations.LocationsPage;
@@ -46,26 +46,46 @@ public class MainActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(MainViewModel.class);
         viewModel.startObserve(this);
+
         findViews();
         setTabNamesRecyclerView();
         setTabsRecyclerView();
         setListeners();
         bindViews();
 
-        viewModel.tabNames.observe(this, tabs -> {
-            tabNamesAdapter.setTabNames(tabs);
+
+//        viewModel.tabNames.observe(this, tabs -> {
+//            tabNamesAdapter.setTabNames(tabs);
+//        });
+//
+//        viewModel.tabs.observe(this, tabs -> {
+//            tabAdapter.setTabs(tabs);
+//            tabNamesAdapter.setCurrentTab(viewModel.adapterPosition, true);
+//        });
+
+        viewModel.adapterPosition.observe(this, position -> {
+            if (tabAdapter.currentPosition != position) {
+                tabAdapter.currentPosition = position;
+                tabs.scrollToPosition(tabAdapter.currentPosition);
+            }
+
+            if (tabNamesAdapter.currentPosition != position) {
+                tabNamesAdapter.currentPosition = position;
+                tabNamesAdapter.notifyDataSetChanged();
+                scrollTabNamesAdapter(tabNamesAdapter.currentPosition);
+            }
         });
 
-        viewModel.tabs.observe(this, tabs -> {
-            tabAdapter.setTabs(tabs);
-            tabNamesAdapter.setCurrentTab(viewModel.adapterPosition, true);
+        viewModel.pages.observe(this, pages -> {
+            tabNamesAdapter.setTabNames(pages.second);
+            tabAdapter.setTabs(pages.first);
         });
 
         viewModel.error.observe(this, error -> {
-            if (error != null){
+            if (error != null) {
                 errorMessage.setVisibility(View.VISIBLE);
                 errorMessage.setText(error);
-            }else{
+            } else {
                 errorMessage.setVisibility(View.GONE);
             }
         });
@@ -91,15 +111,15 @@ public class MainActivity extends AppCompatActivity {
     private void setTabNamesRecyclerView() {
         tabNames.setLayoutManager(new LinearLayoutManager(getApplicationContext(), RecyclerView.HORIZONTAL, false));
         tabNames.setAdapter(tabNamesAdapter);
-        tabNamesAdapter.setTabAdapterInterface((position, isClicked) -> {
-            viewModel.adapterPosition = position;
-            int tabWidth = getResources().getDimensionPixelSize(R.dimen.tab_width);
-            int centerOfScreen = tabNames.getWidth() / 2 - tabWidth / 2;
-            ((LinearLayoutManager) tabNames.getLayoutManager()).scrollToPositionWithOffset(position, centerOfScreen);
-
-            if (isClicked)
-                tabs.scrollToPosition(position);
+        tabNamesAdapter.setTabAdapterInterface((position) -> {
+            viewModel.setAdapterPosition(position);
         });
+    }
+
+    private void scrollTabNamesAdapter(int position) {
+        int tabWidth = getResources().getDimensionPixelSize(R.dimen.tab_width);
+        int centerOfScreen = tabNames.getWidth() / 2 - tabWidth / 2;
+        ((LinearLayoutManager) tabNames.getLayoutManager()).scrollToPositionWithOffset(position, centerOfScreen);
     }
 
     private void setTabsRecyclerView() {
@@ -108,7 +128,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             switch (getResources().getConfiguration().orientation) {
                 case Configuration.ORIENTATION_PORTRAIT:
-
                     tabAdapter.setDualPane(false);
                     break;
                 case Configuration.ORIENTATION_LANDSCAPE:
@@ -129,7 +148,8 @@ public class MainActivity extends AppCompatActivity {
                         View snapView = snapHelper.findSnapView(layoutManager);
                         if (snapView != null) {
                             int position = layoutManager.getPosition(snapView);
-                            tabNamesAdapter.setCurrentTab(position, false);
+                            tabAdapter.currentPosition = position;
+                            viewModel.setAdapterPosition(position);
                         }
                     }
                 }
@@ -141,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListeners() {
         menu.setOnClickListener(v -> {
-            viewModel.addMenu();
+            viewModel.addMenuPage();
         });
 
         tabAdapter.setMenuListener(new MenuPage.MenuListener() {
@@ -150,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                 viewModel.lat = lat;
                 viewModel.lng = lng;
                 viewModel.timeInterval = timeInterval;
-                viewModel.removeMenu();
+                viewModel.removeMenuPage();
                 viewModel.currentUnits = units;
                 bindViews();
                 viewModel.fetchAstronomyData();

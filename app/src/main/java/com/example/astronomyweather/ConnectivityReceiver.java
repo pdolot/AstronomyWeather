@@ -11,12 +11,12 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (connectivityReceiverListener != null){
+        if (connectivityReceiverListener != null) {
             connectivityReceiverListener.onNetworkConnectionChanged(isConnected(context));
         }
     }
 
-    private Boolean isConnected(Context context){
+    private Boolean isConnected(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = manager.getActiveNetworkInfo();
         return info != null && info.isConnectedOrConnecting();

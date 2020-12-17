@@ -13,9 +13,9 @@ import com.example.astronomyweather.view.tabPages.dailyWeather.DailyWeatherAdapt
 import java.util.List;
 
 
-public class WeatherWeeklyPage extends BasePage<Pair<LocationWeather,List<DailyWeather>>> {
+public class WeatherWeeklyPage extends BasePage<Pair<LocationWeather, List<DailyWeather>>> {
 
-    public WeatherWeeklyPage(Pair<LocationWeather,List<DailyWeather>> data) {
+    public WeatherWeeklyPage(Pair<LocationWeather, List<DailyWeather>> data) {
         setData(data);
     }
 

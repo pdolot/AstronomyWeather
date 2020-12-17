@@ -11,7 +11,8 @@ import io.reactivex.schedulers.Schedulers;
 public class WeatherRestRepository {
     private WeatherRestService weatherRestService;
     private static String lang = "pl";
-    private static String exclude = "hourly,minutely";;
+    private static String exclude = "hourly,minutely";
+    ;
 
     public WeatherRestRepository(WeatherRestService weatherRestService) {
         this.weatherRestService = weatherRestService;

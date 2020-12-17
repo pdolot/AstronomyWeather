@@ -18,24 +18,11 @@ public class TabNamesAdapter extends RecyclerView.Adapter<TabNamesAdapter.ViewHo
 
     private List<String> tabNames = new ArrayList<>();
     private TabAdapterInterface tabAdapterInterface;
-    private int currentTab = 0;
+    public int currentPosition = 0;
 
     public void setTabNames(List<String> tabNames) {
-        this.currentTab = 0;
         this.tabNames = tabNames;
         notifyDataSetChanged();
-    }
-
-    public void setCurrentTab(int currentTab, boolean isClicked) {
-        this.currentTab = currentTab;
-        if (tabAdapterInterface != null) {
-            tabAdapterInterface.onTabSelected(this.currentTab, isClicked);
-        }
-        notifyDataSetChanged();
-    }
-
-    public int getCurrentTab() {
-        return currentTab;
     }
 
     public void setTabAdapterInterface(TabAdapterInterface tabAdapterInterface) {
@@ -54,14 +41,14 @@ public class TabNamesAdapter extends RecyclerView.Adapter<TabNamesAdapter.ViewHo
         ConstraintLayout bg = holder.itemView.findViewById(R.id.activeBackground);
         tabName.setText(tabNames.get(position));
 
-        if (position == currentTab) {
+        if (position == currentPosition) {
             bg.setVisibility(View.VISIBLE);
         } else {
             bg.setVisibility(View.INVISIBLE);
         }
 
         holder.itemView.setOnClickListener(v -> {
-            setCurrentTab(position, true);
+            tabAdapterInterface.onTabSelected(position);
         });
     }
 
@@ -82,6 +69,6 @@ public class TabNamesAdapter extends RecyclerView.Adapter<TabNamesAdapter.ViewHo
     }
 
     public interface TabAdapterInterface {
-        void onTabSelected(int position, boolean isClicked);
+        void onTabSelected(int position);
     }
 }

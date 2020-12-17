@@ -24,6 +24,7 @@ public class TabAdapter extends RecyclerView.Adapter<TabAdapter.ViewHolder> {
     private int screenWidth = 0;
     private DisplayMetrics displayMetrics = new DisplayMetrics();
     private boolean isDualPane = false;
+    public int currentPosition = 0;
 
     public void setDualPane(boolean dualPane) {
         isDualPane = dualPane;

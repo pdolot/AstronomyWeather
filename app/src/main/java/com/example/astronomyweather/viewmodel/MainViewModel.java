@@ -40,28 +40,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = MainViewModel.class.getSimpleName();
-
-    private AstronomyRestRepository astronomyRestRepository;
-    private WeatherRestRepository weatherRestRepository;
-
-    private LocationRepository locationRepository;
-    private WeatherRepository weatherRepository;
-    private DailyWeatherRepository dailyWeatherRepository;
-
-    public MutableLiveData<ArrayList<BasePage<?>>> tabs;
-    public MutableLiveData<ArrayList<String>> tabNames;
-    private CompositeDisposable compositeDisposable;
-    private Disposable request;
-
     private static final String API_KEY = "c517372b13b44b3096a47f7d0c6f4a2b";
     private static final String OPEN_WEATHER_API_KEY = "3bf993b129060a4cb85b2d8ab6020708";
+
+    private final CompositeDisposable compositeDisposable;
+    private Disposable request;
 
     public int timeInterval;
     public String lat;
     public String lng;
-
-    public boolean menuExist = false;
-    public int adapterPosition = 0;
 
     private Boolean favoriteFilterEnable = true;
     //  private MutableLiveData<LocationWeather> currentLocation = new MutableLiveData<>();
@@ -70,21 +57,36 @@ public class MainViewModel extends AndroidViewModel {
     private Long oldLocationId = -1L;
     private LocationWeather currentLocation;
     private List<LocationWeather> locations;
+    private Boolean currentLocationWasChanged = false;
 
+    private LocationWeatherResponse weatherResponse;
+    private LocationWeather locationResponse;
+
+    public Units currentUnits = Units.METRIC;
+
+    private boolean menuExist = false;
+    private int previousAdapterPosition = -1;
+    public MutableLiveData<Integer> adapterPosition = new MutableLiveData<>();
+    public MutableLiveData<Pair<List<BasePage<?>>, List<String>>> pages = new MutableLiveData<>();
+    public MutableLiveData<Boolean> isInternetConnection = new MutableLiveData<>();
+    public MutableLiveData<String> error = new MutableLiveData<>();
+
+    // rest repositories
+    private final AstronomyRestRepository astronomyRestRepository = buildAstronomyRestRepository();
+    private final WeatherRestRepository weatherRestRepository = buildWeatherRestRepository();
+
+    // db repositories
+    private final LocationRepository locationRepository = new LocationRepository(getApplication());
+    private final WeatherRepository weatherRepository = new WeatherRepository(getApplication());
+    private final DailyWeatherRepository dailyWeatherRepository = new DailyWeatherRepository(getApplication());
+
+    // pages
     private Pair<String, LocationsPage> locationsPage = null;
     private Pair<String, WeatherPage> currentWeatherPage = null;
     private Pair<String, WeatherWeeklyPage> weeklyWeatherPage = null;
     private Pair<String, MoonPage> moonPage = null;
     private Pair<String, SunPage> sunPage = null;
     private Pair<String, MenuPage> menuPage = null;
-
-    private Boolean currentLocationWasChanged = false;
-
-    public Units currentUnits = Units.METRIC;
-    public MutableLiveData<Boolean> isInternetConnection = new MutableLiveData<>();
-    public MutableLiveData<String> error = new MutableLiveData<>();
-
-    private LocationWeatherResponse weatherResponse;
 
     public void invalidatePages() {
         ArrayList<String> tabNames = new ArrayList<>();
@@ -105,7 +107,7 @@ public class MainViewModel extends AndroidViewModel {
             tabs.add(weeklyWeatherPage.second);
         }
 
-        if (moonPage != null) {
+        if (sunPage != null) {
             tabNames.add(sunPage.first);
             tabs.add(sunPage.second);
         }
@@ -120,23 +122,13 @@ public class MainViewModel extends AndroidViewModel {
             tabs.add(menuPage.second);
         }
 
-        this.tabNames.postValue(tabNames);
-        this.tabs.postValue(tabs);
+        this.pages.postValue(new Pair<>(tabs, tabNames));
     }
 
     public MainViewModel(Application application) {
         super(application);
-        astronomyRestRepository = buildAstronomyRestRepository();
-        weatherRestRepository = buildWeatherRestRepository();
-
-        locationRepository = new LocationRepository(getApplication());
-        weatherRepository = new WeatherRepository(getApplication());
-        dailyWeatherRepository = new DailyWeatherRepository(getApplication());
-
         compositeDisposable = new CompositeDisposable();
-        tabs = new MutableLiveData<>();
-        tabNames = new MutableLiveData<>();
-
+        adapterPosition.setValue(0);
         timeInterval = 5;
         lat = "51.032334";
         lng = "18.340034";
@@ -148,6 +140,9 @@ public class MainViewModel extends AndroidViewModel {
 
         viewModelState.observe(owner, state -> {
             switch (state) {
+                case NEW_LOCATION_IS_CORRECT:
+                    insertNewLocation();
+                    break;
                 case INSERTED_NEW_LOCATION:
                     changeCurrentLocation();
                     break;
@@ -195,17 +190,20 @@ public class MainViewModel extends AndroidViewModel {
                     getWeeklyWeather();
                     break;
                 case FETCHED_WEEKLY_WEATHER_FROM_DB:
-                    invalidatePages();
+                    break;
+                case MENU_PAGE_ADDED:
+                    // move adapter to menu page
+                    adapterPosition.postValue(pages.getValue().first.size() - 1);
                     break;
             }
         });
 
         isInternetConnection.observe(owner, isConnected -> {
-            if (!isConnected){
+            if (!isConnected) {
                 error.postValue("Brak połączenia z internetem");
                 getCurrentWeather();
                 getWeeklyWeather();
-            }else{
+            } else {
                 error.postValue(null);
                 fetchAstronomyData();
             }
@@ -216,9 +214,11 @@ public class MainViewModel extends AndroidViewModel {
         compositeDisposable.add(weatherRepository.getCurrentWeather(currentLocationId)
                 .subscribe(weather -> {
                     currentWeatherPage = new Pair<>("Pogoda", new WeatherPage(new Pair<>(currentLocation, weather)));
+                    invalidatePages();
                     viewModelState.postValue(ViewModelState.FETCHED_CURRENT_WEATHER_FROM_DB);
                 }, error -> {
                     currentWeatherPage = null;
+                    invalidatePages();
                     viewModelState.postValue(ViewModelState.FETCHED_CURRENT_WEATHER_FROM_DB);
                     Log.e(TAG, error.getLocalizedMessage());
                 }));
@@ -227,15 +227,17 @@ public class MainViewModel extends AndroidViewModel {
     private void getWeeklyWeather() {
         compositeDisposable.add(dailyWeatherRepository.getWeatherForNextSevenDays(currentLocationId)
                 .subscribe(weather -> {
-                    if (weather.isEmpty()){
+                    if (weather.isEmpty()) {
                         weeklyWeatherPage = null;
-                    }else{
+                    } else {
                         weeklyWeatherPage = new Pair<>("Prognoza", new WeatherWeeklyPage(new Pair<>(currentLocation, weather)));
                     }
+                    invalidatePages();
                     viewModelState.postValue(ViewModelState.FETCHED_WEEKLY_WEATHER_FROM_DB);
                 }, error -> {
                     weeklyWeatherPage = null;
-                    viewModelState.postValue(ViewModelState.FETCHED_WEEKLY_WEATHER_FROM_DB);;
+                    invalidatePages();
+                    viewModelState.postValue(ViewModelState.FETCHED_WEEKLY_WEATHER_FROM_DB);
                     Log.e(TAG, error.getLocalizedMessage());
                 }));
     }
@@ -252,39 +254,32 @@ public class MainViewModel extends AndroidViewModel {
                 }));
     }
 
-    public void addMenu() {
+    public void setAdapterPosition(int position) {
+        previousAdapterPosition = adapterPosition.getValue();
+        adapterPosition.postValue(position);
+    }
+
+    public void addMenuPage() {
         if (!menuExist) {
             menuExist = true;
             MenuPage menuPage = new MenuPage();
-            menuPage.setData(new SyncData(lat, lng, timeInterval));
-            this.menuPage = new Pair("Menu", menuPage);
+            menuPage.setData(new SyncData(lat, lng, timeInterval, currentUnits));
+            this.menuPage = new Pair<>("Menu", menuPage);
+
             invalidatePages();
-            adapterPosition = this.tabNames.getValue().size() - 1;
         }
+        previousAdapterPosition = adapterPosition.getValue();
+        viewModelState.postValue(ViewModelState.MENU_PAGE_ADDED);
     }
 
-    private void getLocations() {
-        compositeDisposable.add(locationRepository.getLocations(favoriteFilterEnable)
-                .subscribe(locationWeathers -> {
-                    locations = locationWeathers;
-                    viewModelState.postValue(ViewModelState.FETCHED_LOCATIONS_FROM_DB);
-                }, error -> {
-                    Log.e(TAG, error.getMessage());
-                }));
-    }
-
-    public void removeMenu() {
+    public void removeMenuPage() {
         if (menuExist) {
             menuExist = false;
-
             this.menuPage = null;
-            invalidatePages();
 
-            if (adapterPosition - 1 < 0) {
-                adapterPosition = 0;
-            } else {
-                adapterPosition = adapterPosition - 1;
-            }
+            invalidatePages();
+            adapterPosition.postValue(previousAdapterPosition);
+            viewModelState.postValue(ViewModelState.MENU_PAGE_REMOVED);
         }
     }
 
@@ -314,11 +309,20 @@ public class MainViewModel extends AndroidViewModel {
         return new WeatherRestRepository(retrofit.create(WeatherRestService.class));
     }
 
+    private void getLocations() {
+        compositeDisposable.add(locationRepository.getLocations(favoriteFilterEnable)
+                .subscribe(locationWeathers -> {
+                    locations = locationWeathers;
+                    viewModelState.postValue(ViewModelState.FETCHED_LOCATIONS_FROM_DB);
+                }, error -> {
+                    Log.e(TAG, error.getMessage());
+                }));
+    }
+
     public void fetchAstronomyData() {
         if (request != null) {
             compositeDisposable.remove(request);
         }
-
         request = astronomyRestRepository.getAstronomyInfo(API_KEY, lat, lng, timeInterval)
                 .subscribe(data -> {
                     this.sunPage = new Pair<>("Słońce", new SunPage(data.getSunData()));
@@ -372,7 +376,7 @@ public class MainViewModel extends AndroidViewModel {
                                             Log.e(TAG, error.getMessage());
                                         }));
                             }));
-        }else{
+        } else {
             compositeDisposable.add(locationRepository.setCurrent(oldLocationId, false)
                     .subscribe(onSuccess -> {
                         compositeDisposable.add(
@@ -396,19 +400,24 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void checkLocations(String city) {
-        compositeDisposable.add(weatherRestRepository.getCurrentWeather(city, OPEN_WEATHER_API_KEY)
+        compositeDisposable.add(weatherRestRepository.getCurrentWeather(city.trim(), OPEN_WEATHER_API_KEY)
                 .subscribe(data -> {
                     error.postValue(null);
-                    compositeDisposable.add(locationRepository.insert(data)
-                            .subscribe(id -> {
-                                this.oldLocationId = this.currentLocationId;
-                                this.currentLocationId = id;
-                                viewModelState.postValue(ViewModelState.INSERTED_NEW_LOCATION);
-                            }, error -> {
-                                Log.e(TAG, error.getMessage());
-                            }));
+                    locationResponse = data;
+                    viewModelState.postValue(ViewModelState.NEW_LOCATION_IS_CORRECT);
                 }, error -> {
                     this.error.postValue("Błędna lokalizacja");
+                    Log.e(TAG, error.getMessage());
+                }));
+    }
+
+    private void insertNewLocation() {
+        compositeDisposable.add(locationRepository.insert(locationResponse)
+                .subscribe(id -> {
+                    this.oldLocationId = this.currentLocationId;
+                    this.currentLocationId = id;
+                    viewModelState.postValue(ViewModelState.INSERTED_NEW_LOCATION);
+                }, error -> {
                     Log.e(TAG, error.getMessage());
                 }));
     }
@@ -427,7 +436,7 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-    private void insertCurrentWeather(){
+    private void insertCurrentWeather() {
         compositeDisposable.add(weatherRepository.insert(weatherResponse.getCurrent())
                 .subscribe(weatherId -> {
                     viewModelState.postValue(ViewModelState.INSERTED_NEW_CURRENT_WEATHER);
@@ -436,7 +445,7 @@ public class MainViewModel extends AndroidViewModel {
                 }));
     }
 
-    private void deleteCurrentWeather(){
+    private void deleteCurrentWeather() {
         compositeDisposable.add(weatherRepository.delete()
                 .subscribe(onSuccess -> {
                     viewModelState.postValue(ViewModelState.DELETED_CURRENT_WEATHER);
@@ -445,7 +454,7 @@ public class MainViewModel extends AndroidViewModel {
                 }));
     }
 
-    private void insertDailyWeather(){
+    private void insertDailyWeather() {
         compositeDisposable.add(dailyWeatherRepository.insert(weatherResponse.getDaily())
                 .subscribe(onSuccess -> {
                     viewModelState.postValue(ViewModelState.INSERTED_NEW_WEEKLY_WEATHER);
@@ -454,7 +463,7 @@ public class MainViewModel extends AndroidViewModel {
                 }));
     }
 
-    private void deleteDailyWeather(){
+    private void deleteDailyWeather() {
         compositeDisposable.add(dailyWeatherRepository.delete()
                 .subscribe(onSuccess -> {
                     viewModelState.postValue(ViewModelState.DELETED_WEEKLY_WEATHER);
@@ -471,6 +480,8 @@ public class MainViewModel extends AndroidViewModel {
 
     public enum ViewModelState {
         INSERTED_NEW_LOCATION,
+        NEW_LOCATION_IS_CORRECT,
+
         CHANGED_CURRENT_LOCATION,
         CHANGED_FAVORITE_LOCATION,
         CHANGED_FAVORITE_FILTER,
@@ -488,6 +499,9 @@ public class MainViewModel extends AndroidViewModel {
 
         LOCATION_PAGE_ADDED,
         REFRESH_DATA,
-        CHANGED_UNITS
+        CHANGED_UNITS,
+
+        MENU_PAGE_ADDED,
+        MENU_PAGE_REMOVED
     }
 }

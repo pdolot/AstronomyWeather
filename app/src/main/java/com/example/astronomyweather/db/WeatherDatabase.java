@@ -13,9 +13,6 @@ import com.example.astronomyweather.model.weather.DailyWeather;
 import com.example.astronomyweather.model.weather.LocationWeather;
 import com.example.astronomyweather.model.weather.Weather;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 @Database(entities = {LocationWeather.class, Weather.class, DailyWeather.class}, version = 3, exportSchema = false)
 public abstract class WeatherDatabase extends RoomDatabase {
 

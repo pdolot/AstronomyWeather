@@ -7,8 +7,8 @@ import android.widget.RadioGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.astronomyweather.Units;
 import com.example.astronomyweather.R;
+import com.example.astronomyweather.Units;
 import com.example.astronomyweather.model.SyncData;
 
 public class MenuPage extends BasePage<SyncData> {
@@ -30,6 +30,7 @@ public class MenuPage extends BasePage<SyncData> {
         lat.setText(getData().getLat());
         lng.setText(getData().getLng());
         timeInterval.setText(String.valueOf(getData().getTimeInterval()));
+        radioGroup.check(getCheckedId());
 
         applyChanges.setOnClickListener(v -> {
             if (getListener() instanceof MenuListener) {
@@ -45,6 +46,16 @@ public class MenuPage extends BasePage<SyncData> {
         });
     }
 
+    private int getCheckedId() {
+        if (getData().getUnits().equals(Units.IMPERIAL)) {
+            return R.id.imperial;
+        } else if (getData().getUnits().equals(Units.STANDARD)) {
+            return R.id.standard;
+        } else {
+            return R.id.metric;
+        }
+    }
+
     private Units getSelectedMetric(View view, RadioGroup radioGroup) {
         int index = radioGroup.indexOfChild(view.findViewById(radioGroup.getCheckedRadioButtonId()));
         if (index == 1) {
@@ -58,6 +69,7 @@ public class MenuPage extends BasePage<SyncData> {
 
     public interface MenuListener extends BaseListener {
         void onApplyChanges(String lat, String lng, int timeInterval, Units units);
+
         void onRefreshData();
     }
 }
